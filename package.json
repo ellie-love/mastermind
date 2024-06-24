@@ -1,6 +1,7 @@
 {
   "name": "mastermind",
   "version": "0.1.0",
+  "homepage": "https://ellie-love.github.io/mastermind",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
