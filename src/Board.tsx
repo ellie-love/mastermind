@@ -92,7 +92,7 @@ export default function Board({ currentRow, handleSubmit, updateCurrentRow, mark
                     ) : (
                         <>
                             <p>YOU WIN!</p>
-                            <p>Enter your name to be added to the leaderboard</p>
+                            <p>Enter your name to be added to the leaderboard. If you already have an entry, only your best score will be kept.</p>
                             <input
                                 onChange={(e) => {
                                     setName(e.target.value);

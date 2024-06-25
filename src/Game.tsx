@@ -2,6 +2,12 @@ import { useState, useEffect } from "react";
 import Board from './Board';
 import LeaderBoard from './LeaderBoard';
 
+type User = {
+  id: number,
+  name: string;
+  guesses: string;
+};
+
 // TODO colour blind mode
 
 export default function Game() {
@@ -9,7 +15,7 @@ export default function Game() {
   const [prevGuessResults, setPrevGuessResults] = useState(Array(0));
   const [answer, setAnswer] = useState(getNewAnswer());
   const [submittedRows, setSubmittedRows] = useState(Array(0));
-  const [users, setUsers] = useState(Array(0));
+  const [users, setUsers] = useState(Array<User>(0));
   const url = "https://mastermind-data.vercel.app/api/users";
 
   const fetchData = async () => {
@@ -35,6 +41,20 @@ export default function Game() {
         body: JSON.stringify({ name: newWinnerName, guesses: submittedRows.length })
       };
       await fetch(url, requestOptions);
+    } catch (error) {
+      console.log("error", error);
+    }
+    fetchData();
+  };
+
+  const updateUser = async (newWinnerName: string) => {
+    try {
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+      };
+      var putUrl = url + '/' + newWinnerName + '/' + submittedRows.length
+      await fetch(putUrl, requestOptions);
     } catch (error) {
       console.log("error", error);
     }
@@ -82,7 +102,14 @@ export default function Game() {
   }
 
   function setNewWinnerName(newWinnerName: string) {
-    postData(newWinnerName);
+    var existingUser = users.find((u) => { return u.name === newWinnerName });
+    if (existingUser) {
+      if (Number(existingUser.guesses) > submittedRows.length) {
+        updateUser(newWinnerName)
+      }
+    } else {
+      postData(newWinnerName);
+    }
   }
 
   function updateCurrentRow(circleId: number, newValue: string) {
