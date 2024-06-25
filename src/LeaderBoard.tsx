@@ -8,14 +8,17 @@ type User = {
 
 type Props = {
     users: Array<User>,
+    title: string,
+    subtitle?: string
 }
 
 
-export default function LeaderBoard({ users }: Props) {
+export default function LeaderBoard({ users, title, subtitle }: Props) {
 
     return (
         <div className="leaderboard-container">
-            <h2 className="leaderboard-title">Leader Board</h2>
+            <h2 className="leaderboard-title">{title}</h2>
+            <p className="leaderboard-title">{subtitle}</p>
             <ul className="user-list">
                 <li className="user-header">
                     <span className="header-name">Name</span>

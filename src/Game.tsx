@@ -16,14 +16,18 @@ export default function Game() {
   const [answer, setAnswer] = useState(getNewAnswer());
   const [submittedRows, setSubmittedRows] = useState(Array(0));
   const [users, setUsers] = useState(Array<User>(0));
+  const [singleGuessUsers, setSingleGuessUsers] = useState(Array<User>(0));
   const url = "https://mastermind-data.vercel.app/api/users";
 
   const fetchData = async () => {
     try {
       const response = await fetch(url);
+      let users = await response.json() as Array<User>;
 
-      setUsers(await response.json())
-      console.log(users);
+      setUsers(users);
+      setSingleGuessUsers(users.filter(function (u) {
+        return u.guesses.toString() === '1';
+      }));
     } catch (error) {
       console.log("error", error);
     }
@@ -102,12 +106,11 @@ export default function Game() {
   }
 
   function setNewWinnerName(newWinnerName: string) {
-    var existingUser = users.find((u) => { return u.name === newWinnerName });
-    if (existingUser) {
-      if (Number(existingUser.guesses) > submittedRows.length) {
-        updateUser(newWinnerName)
-      }
-    } else {
+    const existingUser = users.find((u) => { return u.name === newWinnerName });
+    if (existingUser && Number(existingUser.guesses) > submittedRows.length) {
+      updateUser(newWinnerName)
+    }
+    else if (!existingUser) {
       postData(newWinnerName);
     }
   }
@@ -141,7 +144,8 @@ export default function Game() {
       <button className="submit-button" onClick={handleNewGameClick}>
         New Game
       </button>
-      <LeaderBoard users={users} />
+      {users.length > 0 ? <LeaderBoard users={users} title='Leaderboard' /> : <></>}
+      {singleGuessUsers.length > 0 ? <LeaderBoard users={singleGuessUsers} title='Hall of fame/shame' subtitle="Guessed it in one? Suspicious..." /> : <></>}
     </div>
   )
 }
