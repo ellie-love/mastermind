@@ -7,6 +7,7 @@ type User = {
   id: number,
   name: string;
   guesses: string;
+  guessDate: Date;
 };
 
 // TODO colour blind mode
@@ -17,6 +18,7 @@ export default function Game() {
   const [submittedRows, setSubmittedRows] = useState(Array(0));
   const [users, setUsers] = useState(Array<User>(0));
   const [singleGuessUsers, setSingleGuessUsers] = useState(Array<User>(0));
+  const [todayUsers, setTodayUsers] = useState(Array<User>(0));
   const url = "https://mastermind-data.vercel.app/api/users";
 
   const fetchData = async () => {
@@ -27,6 +29,9 @@ export default function Game() {
       setUsers(users);
       setSingleGuessUsers(users.filter(function (u) {
         return u.guesses.toString() === '1';
+      }));
+      setTodayUsers(users.filter(function (u) {
+        return new Date(u.guessDate).setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0)
       }));
     } catch (error) {
       console.log("error", error);
@@ -146,8 +151,9 @@ export default function Game() {
         New Game
       </button>
       <div className="rowFlex">
-        {users.length > 0 ? <LeaderBoard users={users} title='Leaderboard' /> : <></>}
-        {singleGuessUsers.length > 0 ? <LeaderBoard users={singleGuessUsers} title='Hall of fame/shame' subtitle="Guessed it in one? Suspicious..." /> : <></>}
+        {users.length > 0 ? <LeaderBoard users={users} title="All-time" /> : <></>}
+        {todayUsers.length > 0 ? <LeaderBoard users={todayUsers} title="Today's Leaderboard" /> : <></>}
+        {singleGuessUsers.length > 0 ? <LeaderBoard users={singleGuessUsers} title="Hall of fame/shame" subtitle="Suspicious..." /> : <></>}
       </div>
     </div>
   )
