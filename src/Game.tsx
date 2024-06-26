@@ -113,6 +113,7 @@ export default function Game() {
     else if (!existingUser) {
       postData(newWinnerName);
     }
+    handleNewGameClick();
   }
 
   function updateCurrentRow(circleId: number, newValue: string) {

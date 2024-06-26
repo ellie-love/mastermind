@@ -40,7 +40,7 @@ export default function Board({ currentRow, handleSubmit, updateCurrentRow, mark
     function handleNameSubmitted(name: string) {
         const validNameRegex = /^[a-zA-Z0-9\s-]+$/;
         if (!validNameRegex.test(name)) {
-            setNameError('There are invalid characters in the name. Please only enter letters, numbres, hyphens and spaces.');
+            setNameError('There are invalid characters in the name. Please only enter letters, numbers, hyphens and spaces.');
         } else if (name.trim() === '') {
             setNameError('Name cannot be empty.');
         } else if (name.length > 35) {
