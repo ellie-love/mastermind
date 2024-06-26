@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Board from './Board';
 import LeaderBoard from './LeaderBoard';
+import secureLocalStorage from "react-secure-storage";
 
 type User = {
   id: number,
@@ -13,7 +14,6 @@ type User = {
 export default function Game() {
   const [currentValues, setCurrentValues] = useState(Array(4).fill(''));
   const [prevGuessResults, setPrevGuessResults] = useState(Array(0));
-  const [answer, setAnswer] = useState(getNewAnswer());
   const [submittedRows, setSubmittedRows] = useState(Array(0));
   const [users, setUsers] = useState(Array<User>(0));
   const [singleGuessUsers, setSingleGuessUsers] = useState(Array<User>(0));
@@ -68,7 +68,7 @@ export default function Game() {
   function handleSubmit() {
     setSubmittedRows([...submittedRows, currentValues]);
 
-    let answerRow = answer.slice();
+    let answerRow: string[] = JSON.parse(secureLocalStorage.getItem("answer") as string);
     let guessRow = currentValues.slice();
     let markers = [];
 
@@ -135,7 +135,7 @@ export default function Game() {
   function handleNewGameClick() {
     setCurrentValues(Array(4).fill(''));
     setPrevGuessResults(Array(0));
-    setAnswer(getNewAnswer());
+    secureLocalStorage.setItem("answer", JSON.stringify(getNewAnswer()));
     setSubmittedRows(Array(0));
   }
 
@@ -145,8 +145,10 @@ export default function Game() {
       <button className="submit-button" onClick={handleNewGameClick}>
         New Game
       </button>
-      {users.length > 0 ? <LeaderBoard users={users} title='Leaderboard' /> : <></>}
-      {singleGuessUsers.length > 0 ? <LeaderBoard users={singleGuessUsers} title='Hall of fame/shame' subtitle="Guessed it in one? Suspicious..." /> : <></>}
+      <div className="rowFlex">
+        {users.length > 0 ? <LeaderBoard users={users} title='Leaderboard' /> : <></>}
+        {singleGuessUsers.length > 0 ? <LeaderBoard users={singleGuessUsers} title='Hall of fame/shame' subtitle="Guessed it in one? Suspicious..." /> : <></>}
+      </div>
     </div>
   )
 }
